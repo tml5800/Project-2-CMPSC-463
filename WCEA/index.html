@@ -1,37 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Philadelphia Weather Crisis Evacuation Assistant</title>
+    <title>Philadelphia Evacuation Assistant</title>
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    <!-- Heatmap plugin (optional) -->
-    <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
+    <!-- Priority Queue -->
+    <script src="https://cdn.jsdelivr.net/npm/@datastructures-js/priority-queue/dist/priority-queue.min.js"></script>
 </head>
+
 <body>
 
 <h1>Philadelphia Weather Crisis Evacuation Assistant</h1>
 
 <div id="controls">
     <div class="input-box">
-        <label>Enter Start Address:</label>
-        <input id="startAddress" placeholder="e.g. 1600 Market St, Philadelphia">
+        <label>Start Address:</label>
+        <input id="startAddress" placeholder="Example: 1600 Market St">
     </div>
 
     <div class="input-box">
-        <label>Enter Safe Destination:</label>
-        <input id="endAddress" placeholder="e.g. 30th Street Station, Philadelphia">
+        <label>Destination Address:</label>
+        <input id="endAddress" placeholder="Example: 30th Street Station">
     </div>
 
-    <button onclick="geocodeAndRoute()">Find Route</button>
+    <button onclick="geocodeAndRoute()">Find Safe Route</button>
 </div>
 
 <div id="map"></div>
 
+<!-- Load JS Files -->
+<script src="src/priorityqueue.js"></script>
+<script src="src/graph.js"></script>
+<script src="src/dijkstra.js"></script>
 <script src="app.js"></script>
 
 </body>

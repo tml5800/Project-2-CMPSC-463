@@ -1,21 +1,27 @@
 function dijkstra(graph, start, end) {
     let dist = {};
     let prev = {};
-    let pq = new MinPriorityQueue();
 
-    for (let v of graph.nodes) {
-        dist[v] = Infinity;
-    }
+    let pq = new MinPriorityQueueSimple();
+
+    graph.nodes.forEach(n => {
+        dist[n] = Infinity;
+        prev[n] = null;
+    });
 
     dist[start] = 0;
     pq.enqueue(start, 0);
 
     while (!pq.isEmpty()) {
-        let { element: u } = pq.dequeue();
+        let u = pq.dequeue().element;
+
         if (u === end) break;
 
-        for (let { node: v, weight } of graph.neighbors(u)) {
+        for (let e of graph.neighbors(u)) {
+            let v = e.node;
+            let weight = e.weight;
             let alt = dist[u] + weight;
+
             if (alt < dist[v]) {
                 dist[v] = alt;
                 prev[v] = u;
@@ -25,10 +31,12 @@ function dijkstra(graph, start, end) {
     }
 
     let path = [];
-    let u = end;
-    while (u) {
-        path.unshift(graph.coords[u]);
-        u = prev[u];
+    let node = end;
+
+    while (node) {
+        path.unshift(node);
+        node = prev[node];
     }
+
     return path;
 }
