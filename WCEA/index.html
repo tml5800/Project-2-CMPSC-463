@@ -1,30 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Weather Crisis Evacuation Assistant</title>
+    <title>Philadelphia Weather Crisis Evacuation Assistant</title>
+
     <link rel="stylesheet" href="style.css">
+
+    <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- Heatmap plugin (optional) -->
+    <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
 </head>
 <body>
 
-<h1>Weather Crisis Evacuation Assistant</h1>
+<h1>Philadelphia Weather Crisis Evacuation Assistant</h1>
 
 <div id="controls">
-    <label>Start:</label>
-    <input id="startInput" placeholder="lat,lng">
+    <div class="input-box">
+        <label>Enter Start Address:</label>
+        <input id="startAddress" placeholder="e.g. 1600 Market St, Philadelphia">
+    </div>
 
-    <label>Destination:</label>
-    <input id="destInput" placeholder="lat,lng">
+    <div class="input-box">
+        <label>Enter Safe Destination:</label>
+        <input id="endAddress" placeholder="e.g. 30th Street Station, Philadelphia">
+    </div>
 
-    <button onclick="findRoute()">Find Route</button>
+    <button onclick="geocodeAndRoute()">Find Route</button>
 </div>
 
 <div id="map"></div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="src/dijkstra.js"></script>
-<script src="src/a_star.js"></script>
-<script src="src/graph.js"></script>
 <script src="app.js"></script>
 
 </body>
