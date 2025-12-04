@@ -1,48 +1,36 @@
-function aStar(graph, start, goal) {
-    function heuristic(a, b) {
-        return Math.sqrt(
-            Math.pow(a[0] - b[0], 2) + 
-            Math.pow(a[1] - b[1], 2)
-        );
-    }
+function heuristic(a, b) {
+    let dx = a[0] - b[0], dy = a[1] - b[1];
+    return Math.sqrt(dx*dx + dy*dy);
+}
 
-    let open = new MinPriorityQueue();
-    let cameFrom = {};
-    let g = {};
-    let f = {};
+function astar(graph, start, end) {
+    let open = new MinPriorityQueueSimple();
+    let g = {}, f = {}, prev = {};
 
-    for (let v of graph.nodes) {
-        g[v] = Infinity;
-        f[v] = Infinity;
-    }
+    graph.nodes.forEach(n => { g[n] = Infinity; f[n] = Infinity; prev[n] = null; });
 
     g[start] = 0;
-    f[start] = heuristic(graph.coords[start], graph.coords[goal]);
-
+    f[start] = heuristic(graph.coords[start], graph.coords[end]);
     open.enqueue(start, f[start]);
 
     while (!open.isEmpty()) {
-        let { element: current } = open.dequeue();
+        let u = open.dequeue().element;
+        if (u === end) break;
 
-        if (current === goal) break;
-
-        for (let { node: neighbor, weight } of graph.neighbors(current)) {
-            let tentative = g[current] + weight;
-
-            if (tentative < g[neighbor]) {
-                cameFrom[neighbor] = current;
-                g[neighbor] = tentative;
-                f[neighbor] = tentative + heuristic(graph.coords[neighbor], graph.coords[goal]);
-                open.enqueue(neighbor, f[neighbor]);
+        for (let e of graph.neighbors(u)) {
+            let v = e.node;
+            let cost = g[u] + e.weight;
+            if (cost < g[v]) {
+                g[v] = cost;
+                f[v] = cost + heuristic(graph.coords[v], graph.coords[end]);
+                prev[v] = u;
+                open.enqueue(v, f[v]);
             }
         }
     }
 
     let path = [];
-    let c = goal;
-    while (c) {
-        path.unshift(graph.coords[c]);
-        c = cameFrom[c];
-    }
+    let cur = end;
+    while (cur) { path.unshift(cur); cur = prev[cur]; }
     return path;
 }

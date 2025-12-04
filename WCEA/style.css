@@ -1,49 +1,36 @@
 body {
     margin: 0;
     font-family: Arial;
-    background: #f4f4f4;
 }
-
 h1 {
     background: #222;
-    color: white;
+    color: #fff;
     padding: 12px;
+    margin: 0;
     text-align: center;
 }
-
 #controls {
-    background: #e3e3e3;
-    padding: 10px;
     display: flex;
     gap: 20px;
+    padding: 10px;
+    background: #eee;
     justify-content: center;
 }
-
-.input-box {
-    display: flex;
-    flex-direction: column;
-}
-
+.input-box { display: flex; flex-direction: column; }
 input {
     padding: 6px;
-    width: 250px;
+    width: 240px;
 }
-
 button {
+    padding: 10px 14px;
+    border: none;
+    cursor: pointer;
     background: #007700;
     color: white;
-    border: none;
-    padding: 10px 20px;
     border-radius: 6px;
-    cursor: pointer;
-    font-size: 15px;
 }
-
-button:hover {
-    background: #005500;
-}
-
+button:hover { background: #005500; }
 #map {
-    height: 85vh;
     width: 100%;
+    height: 85vh;
 }

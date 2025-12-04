@@ -1,37 +1,36 @@
-// --------------------------------------------------
-// MAP SETUP
-// --------------------------------------------------
-var map = L.map('map').setView([39.9526, -75.1652], 14);
+// --------------------------------------
+// MAP INIT
+// --------------------------------------
+var map = L.map('map').setView([39.955, -75.165], 12);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
+    maxZoom: 19
 }).addTo(map);
 
-
-// --------------------------------------------------
+// --------------------------------------
 // DANGER ZONES
-// --------------------------------------------------
+// --------------------------------------
 let dangerZones = [
-    { name: "Flood Zone", coords: [39.950, -75.180], radius: 1200 },
-    { name: "Storm Impact", coords: [39.965, -75.150], radius: 1000 }
+    { coords: [39.9520, -75.1650], radius: 1300 },
+    { coords: [39.9650, -75.1450], radius: 1200 },
+    { coords: [39.9400, -75.1650], radius: 1100 }
 ];
 
 dangerZones.forEach(z => {
     L.circle(z.coords, {
         color: "red",
         fillColor: "#f03",
-        fillOpacity: 0.4,
+        fillOpacity: 0.3,
         radius: z.radius
-    }).addTo(map).bindPopup("⚠ Danger Zone: " + z.name);
+    }).addTo(map);
 });
 
-
-// --------------------------------------------------
+// --------------------------------------
 // SAFE ZONES
-// --------------------------------------------------
+// --------------------------------------
 let safeZones = [
-    { name: "Shelter - South Philly", coords: [39.930, -75.160], radius: 600 },
-    { name: "Shelter - North Philly", coords: [39.990, -75.150], radius: 600 }
+    { name: "North Shelter", coords: [39.9800, -75.1450] },
+    { name: "South Shelter", coords: [39.9300, -75.1600] }
 ];
 
 safeZones.forEach(z => {
@@ -39,71 +38,101 @@ safeZones.forEach(z => {
         color: "green",
         fillColor: "green",
         fillOpacity: 0.3,
-        radius: z.radius
-    }).addTo(map).bindPopup("🟢 Safe Zone: " + z.name);
+        radius: 900
+    }).addTo(map).bindPopup(z.name);
 });
 
-
-// --------------------------------------------------
-// GEOCODING
-// --------------------------------------------------
-async function geocode(address) {
-    let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address + " Philadelphia")}`;
-
+// --------------------------------------
+// GEOCODER
+// --------------------------------------
+async function geocode(addr) {
+    let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr + " Philadelphia")}`;
     let res = await fetch(url);
     let data = await res.json();
-
-    if (data.length === 0) {
-        alert("Address not found: " + address);
-        return null;
-    }
-
+    if (!data.length) return null;
     return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
 }
 
-
-// --------------------------------------------------
-// LOAD STREET GRAPH
-// --------------------------------------------------
+// --------------------------------------
+// LOAD GRAPH
+// --------------------------------------
 async function loadGraph() {
-    let g = await fetch("data/philly_graph.json").then(r => r.json());
-    return new Graph(g);
+    return new Graph(await fetch("data/philly_graph.json").then(r => r.json()));
 }
 
+// Avoid nodes inside danger zones
+function penalizeDanger(graph) {
+    let dangerPenalty = 999999;
+    for (let n in graph.coords) {
+        let c = graph.coords[n];
+        dangerZones.forEach(z => {
+            let dist = Math.sqrt(
+                Math.pow(c[0] - z.coords[0], 2) +
+                Math.pow(c[1] - z.coords[1], 2)
+            );
+            let rd = z.radius / 111320;
+            if (dist < rd) {
+                graph.edges[n].forEach(e => e.weight += dangerPenalty);
+            }
+        });
+    }
+}
 
-// --------------------------------------------------
-// ROUTING FUNCTION
-// --------------------------------------------------
-async function routeThroughGraph(startCoords, endCoords) {
+// --------------------------------------
+// ROUTES
+// --------------------------------------
+async function findSafestRoute() {
+    let sA = document.getElementById("startAddress").value;
+    let eA = document.getElementById("endAddress").value;
+
+    let s = await geocode(sA);
+    let e = await geocode(eA);
+    if (!s || !e) return alert("Invalid addresses.");
+
+    let graph = await loadGraph();
+    penalizeDanger(graph);
+
+    let sN = graph.closestNode(s);
+    let eN = graph.closestNode(e);
+
+    let path = dijkstra(graph, sN, eN);
+    let pts = path.map(n => graph.coords[n]);
+
+    L.polyline(pts, { color: "blue", weight: 6 }).addTo(map);
+    map.fitBounds(pts);
+}
+
+async function findFastestRoute() {
+    let sA = document.getElementById("startAddress").value;
+    let eA = document.getElementById("endAddress").value;
+
+    let s = await geocode(sA);
+    let e = await geocode(eA);
+    if (!s || !e) return alert("Invalid addresses.");
+
     let graph = await loadGraph();
 
-    let startNode = graph.closestNode(startCoords);
-    let endNode = graph.closestNode(endCoords);
+    let sN = graph.closestNode(s);
+    let eN = graph.closestNode(e);
 
-    let route = dijkstra(graph, startNode, endNode);
+    let path = astar(graph, sN, eN);
+    let pts = path.map(n => graph.coords[n]);
 
-    let latlngs = route.map(n => graph.coords[n]);
-
-    L.polyline(latlngs, { color: "blue", weight: 5 }).addTo(map);
-
-    map.fitBounds(latlngs);
+    L.polyline(pts, { color: "orange", weight: 6 }).addTo(map);
+    map.fitBounds(pts);
 }
 
+async function evacuateToSafeZone() {
+    let startAddr = document.getElementById("startAddress").value;
+    let s = await geocode(startAddr);
+    if (!s) return alert("Invalid address.");
 
-// --------------------------------------------------
-// MAIN FUNCTION
-// --------------------------------------------------
-async function geocodeAndRoute() {
-    let startText = document.getElementById("startAddress").value;
-    let endText = document.getElementById("endAddress").value;
+    let nearest = safeZones.reduce((a, b) =>
+        (L.latLng(s).distanceTo(a.coords) < L.latLng(s).distanceTo(b.coords)) ? a : b
+    );
 
-    let start = await geocode(startText);
-    let end = await geocode(endText);
+    document.getElementById("endAddress").value =
+        nearest.coords[0] + ", " + nearest.coords[1];
 
-    if (!start || !end) return;
-
-    L.marker(start).addTo(map).bindPopup("Start");
-    L.marker(end).addTo(map).bindPopup("Destination");
-
-    routeThroughGraph(start, end);
+    findSafestRoute();
 }

@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Philadelphia Evacuation Assistant</title>
+    <title>Philadelphia Weather Crisis Evacuation Assistant</title>
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- Leaflet CSS + JS -->
+    <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 </head>
 
 <body>
@@ -19,24 +18,27 @@
 
     <div class="input-box">
         <label>Start Address:</label>
-        <input id="startAddress" placeholder="Example: City Hall, Philadelphia">
+        <input id="startAddress" placeholder="Example: 1401 Master St">
     </div>
 
     <div class="input-box">
         <label>Destination Address:</label>
-        <input id="endAddress" placeholder="Example: 30th Street Station">
+        <input id="endAddress" placeholder="Example: 1933 Fitzwater St">
     </div>
 
-    <button onclick="geocodeAndRoute()">Find Safe Route</button>
+    <button onclick="findSafestRoute()">Safest Route (Dijkstra)</button>
+    <button onclick="findFastestRoute()">Fastest Route (A*)</button>
+    <button onclick="evacuateToSafeZone()">Evacuate to Nearest Safe Zone</button>
 
 </div>
 
 <div id="map"></div>
 
-<!-- Load JS Order Matters -->
+<!-- Load JS -->
 <script src="src/priorityqueue.js"></script>
 <script src="src/graph.js"></script>
 <script src="src/dijkstra.js"></script>
+<script src="src/astar.js"></script>
 <script src="app.js"></script>
 
 </body>
