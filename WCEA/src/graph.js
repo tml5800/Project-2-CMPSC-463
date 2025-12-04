@@ -11,7 +11,7 @@ class Graph {
 
     // Find closest graph node to coordinates
     closestNode(latlng) {
-        let best = null;
+        let nearest = null;
         let bestDist = Infinity;
 
         for (let node in this.coords) {
@@ -23,9 +23,9 @@ class Graph {
 
             if (d < bestDist) {
                 bestDist = d;
-                best = node;
+                nearest = node;
             }
         }
-        return best;
+        return nearest;
     }
 }

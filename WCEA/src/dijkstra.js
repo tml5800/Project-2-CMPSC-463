@@ -19,8 +19,7 @@ function dijkstra(graph, start, end) {
 
         for (let e of graph.neighbors(u)) {
             let v = e.node;
-            let weight = e.weight;
-            let alt = dist[u] + weight;
+            let alt = dist[u] + e.weight;
 
             if (alt < dist[v]) {
                 dist[v] = alt;
@@ -31,11 +30,11 @@ function dijkstra(graph, start, end) {
     }
 
     let path = [];
-    let node = end;
+    let current = end;
 
-    while (node) {
-        path.unshift(node);
-        node = prev[node];
+    while (current) {
+        path.unshift(current);
+        current = prev[current];
     }
 
     return path;

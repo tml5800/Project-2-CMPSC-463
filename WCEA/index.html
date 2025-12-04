@@ -5,12 +5,10 @@
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- Leaflet CSS & JS -->
+    <!-- Leaflet CSS + JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    <!-- Priority Queue -->
-    <script src="https://cdn.jsdelivr.net/npm/@datastructures-js/priority-queue/dist/priority-queue.min.js"></script>
 </head>
 
 <body>
@@ -18,9 +16,10 @@
 <h1>Philadelphia Weather Crisis Evacuation Assistant</h1>
 
 <div id="controls">
+
     <div class="input-box">
         <label>Start Address:</label>
-        <input id="startAddress" placeholder="Example: 1600 Market St">
+        <input id="startAddress" placeholder="Example: City Hall, Philadelphia">
     </div>
 
     <div class="input-box">
@@ -29,11 +28,12 @@
     </div>
 
     <button onclick="geocodeAndRoute()">Find Safe Route</button>
+
 </div>
 
 <div id="map"></div>
 
-<!-- Load JS Files -->
+<!-- Load JS Order Matters -->
 <script src="src/priorityqueue.js"></script>
 <script src="src/graph.js"></script>
 <script src="src/dijkstra.js"></script>

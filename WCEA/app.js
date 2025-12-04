@@ -1,7 +1,7 @@
 // --------------------------------------------------
-// Initialize Philadelphia Map
+// MAP SETUP
 // --------------------------------------------------
-var map = L.map('map').setView([39.9526, -75.1652], 13);
+var map = L.map('map').setView([39.9526, -75.1652], 14);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
@@ -9,7 +9,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 
 // --------------------------------------------------
-// Add Danger Zones (RED CIRCLES)
+// DANGER ZONES
 // --------------------------------------------------
 let dangerZones = [
     { name: "Flood Zone", coords: [39.950, -75.180], radius: 1200 },
@@ -27,7 +27,7 @@ dangerZones.forEach(z => {
 
 
 // --------------------------------------------------
-// Safe Zones (GREEN CIRCLES)
+// SAFE ZONES
 // --------------------------------------------------
 let safeZones = [
     { name: "Shelter - South Philly", coords: [39.930, -75.160], radius: 600 },
@@ -45,7 +45,7 @@ safeZones.forEach(z => {
 
 
 // --------------------------------------------------
-// Geocoder (Nominatim)
+// GEOCODING
 // --------------------------------------------------
 async function geocode(address) {
     let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address + " Philadelphia")}`;
@@ -63,16 +63,16 @@ async function geocode(address) {
 
 
 // --------------------------------------------------
-// Load graph
+// LOAD STREET GRAPH
 // --------------------------------------------------
 async function loadGraph() {
-    let data = await fetch('data/philly_graph.json').then(r => r.json());
-    return new Graph(data);
+    let g = await fetch("data/philly_graph.json").then(r => r.json());
+    return new Graph(g);
 }
 
 
 // --------------------------------------------------
-// Route through graph using Dijkstra
+// ROUTING FUNCTION
 // --------------------------------------------------
 async function routeThroughGraph(startCoords, endCoords) {
     let graph = await loadGraph();
@@ -80,34 +80,30 @@ async function routeThroughGraph(startCoords, endCoords) {
     let startNode = graph.closestNode(startCoords);
     let endNode = graph.closestNode(endCoords);
 
-    let path = dijkstra(graph, startNode, endNode);
+    let route = dijkstra(graph, startNode, endNode);
 
-    let latlngs = path.map(n => graph.coords[n]);
+    let latlngs = route.map(n => graph.coords[n]);
 
     L.polyline(latlngs, { color: "blue", weight: 5 }).addTo(map);
+
     map.fitBounds(latlngs);
 }
 
 
 // --------------------------------------------------
-// Main Function
+// MAIN FUNCTION
 // --------------------------------------------------
 async function geocodeAndRoute() {
-    let startAddress = document.getElementById("startAddress").value;
-    let endAddress = document.getElementById("endAddress").value;
+    let startText = document.getElementById("startAddress").value;
+    let endText = document.getElementById("endAddress").value;
 
-    if (!startAddress || !endAddress) {
-        alert("Enter both addresses");
-        return;
-    }
+    let start = await geocode(startText);
+    let end = await geocode(endText);
 
-    let startCoords = await geocode(startAddress);
-    let endCoords = await geocode(endAddress);
+    if (!start || !end) return;
 
-    if (!startCoords || !endCoords) return;
+    L.marker(start).addTo(map).bindPopup("Start");
+    L.marker(end).addTo(map).bindPopup("Destination");
 
-    L.marker(startCoords).addTo(map).bindPopup("Start").openPopup();
-    L.marker(endCoords).addTo(map).bindPopup("Destination");
-
-    routeThroughGraph(startCoords, endCoords);
+    routeThroughGraph(start, end);
 }
