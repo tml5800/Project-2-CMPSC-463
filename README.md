@@ -1,6 +1,6 @@
 Project Title: Philadelphia Weather Crisis Evacuation Assistant (WCEA)
 Course: CMPSC 463 – Algorithms
-Authors: Tommy Lu & Team
+Authors: Tommy Lu & Matthew Kaplan
 
 🌩️ Philadelphia Weather Crisis Evacuation Assistant (WCEA)
 
