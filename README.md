@@ -45,7 +45,7 @@ South Philadelphia Relief Zone
 
 🧭 ✔ Pathfinding Through City Streets
 
-Unlike simple straight-line routing, this project uses graph-based routing, meaning the route follows actual street intersections and connections.
+Unlike simple straight-line routing, this project uses graph-based routing.
 
 It uses:
 
@@ -90,16 +90,18 @@ Nominatim Geocoding API (OpenStreetMap)
 
 📂 Project Structure
 WCEA/
- ├── index.html
- ├── style.css
- ├── app.js
+ ├── index.html        (HTML interface + UI buttons)
+ ├── style.css         (User interface styling)
+ ├── app.js	       (Main logic, routing modes, hazard avoidance)
  ├── /src
- │     ├── graph.js
- │     ├── dijkstra.js
- │     ├── priorityqueue.js
+ │     ├── graph.js    (Graph data structure + nearest-node function)
+ │     ├── dijkstra.js (Safest route algorithm)
+ │     ├── astar.js    (Fastest route algorithm)
+ │     ├── priorityqueue.js (Min-heap priority queue)
  ├── /data
- │     └── philly_graph.json
+ │     └── philly_graph.json (Philadelphia street network)
  ├── README.md
+
 
 🏃‍♂️ How to Run the Project (Local Server Required)
 
@@ -131,9 +133,7 @@ Finds the closest nodes to start and end points.
 
 Runs Dijkstra's Algorithm to compute safest route.
 
-Draws the route on the map using a blue polyline.
-
-Map zooms to show the entire path.
+Draws the route on the map.
 
 🧱 Data Files Explained
 philly_graph.json
@@ -148,19 +148,13 @@ Safe zones
 
 Hardcoded in app.js as green circles.
 
-📌 Future Improvements (Optional)
-
-Hazard avoidance algorithms
-
-A* pathfinding
+📌 Future Improvements
 
 Live weather data integration
 
-Automatic shelter recommendation
-
 UI redesign
 
-Expand street graph coverage
+Expand street graph coverage significantly
 
 🏁 Conclusion
 
@@ -175,24 +169,6 @@ Integration of real-world emergency response concepts
 Strong understanding of algorithmic design and web development
 
 This project fulfills the goals of CMPSC 463 by showing how algorithms can solve meaningful real-world problems.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 example 
