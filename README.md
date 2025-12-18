@@ -89,18 +89,30 @@ Services
 Nominatim Geocoding API (OpenStreetMap)
 
 📂 Project Structure
+
 WCEA/
 
+
  ├── index.html        (HTML interface + UI buttons)
+ 
  ├── style.css         (User interface styling)
+ 
  ├── app.js	       (Main logic, routing modes, hazard avoidance)
+ 
  ├── /src
+ 
  │     ├── graph.js    (Graph data structure + nearest-node function)
+ 
  │     ├── dijkstra.js (Safest route algorithm)
+ 
  │     ├── astar.js    (Fastest route algorithm)
+ 
  │     ├── priorityqueue.js (Min-heap priority queue)
+ 
  ├── /data
+ 
  │     └── philly_graph.json (Philadelphia street network)
+ 
  ├── README.md
 
 
