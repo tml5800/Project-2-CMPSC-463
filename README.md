@@ -90,6 +90,7 @@ Nominatim Geocoding API (OpenStreetMap)
 
 📂 Project Structure
 WCEA/
+
  ├── index.html        (HTML interface + UI buttons)
  ├── style.css         (User interface styling)
  ├── app.js	       (Main logic, routing modes, hazard avoidance)
