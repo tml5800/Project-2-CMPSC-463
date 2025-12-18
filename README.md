@@ -111,7 +111,7 @@ WCEA/
  
  ├── /data
  
- │     └── philly_graph.json (Philadelphia street network)
+ │     ├── philly_graph.json (Philadelphia street network)
  
  ├── README.md
 
